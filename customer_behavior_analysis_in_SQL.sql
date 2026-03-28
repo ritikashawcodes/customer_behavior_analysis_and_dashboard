@@ -5,11 +5,6 @@ select gender, SUM(purchase_amount) as revenue
 FROM customer
 GROUP BY gender;
 
---Male customers generated significantly higher total revenue ($157,890) compared to female customers ($75,191). 
---However, this is largely driven by the higher proportion of male customers in the dataset (2,652 vs 1,248), 
---not necessarily higher individual spending."
-
------------------------------------------------------------------------------------------------------------------------
 -- Which gender has a higher average order value?
 SELECT gender,
        COUNT(*) AS total_customers,
@@ -17,11 +12,6 @@ SELECT gender,
 FROM customer
 GROUP BY gender
 ORDER BY avg_purchase_amount DESC;
-
---Male customers constitute the majority of the dataset (2652 vs 1248). 
---However, female customers demonstrate a slightly higher average order value ($60.25 vs $59.54), 
---indicating stronger spending behavior per transaction.
-----------------------------------------------------------------------------------------------------------------------
 
 --Find the top 3 categories by total revenue, but only include categories where more than 50 purchases were made.
 SELECT category, 
@@ -32,12 +22,6 @@ GROUP BY category
 HAVING COUNT(purchase_amount) > 50
 ORDER BY SUM(purchase_amount) DESC
 LIMIT 3;
-
---Clothing generated the highest revenue ($104,264) with 1,737 purchases, 
---followed by Accessories ($74,200) and Footwear ($36,093). This indicates that customer spending is 
---heavily concentrated in the Clothing and Accessories categories, 
---making them the primary drivers of overall revenue.
------------------------------------------------------------------------------------------------------------------------
 
 -- q2. which customers used a discount but still spent more than the average purchase amount?
 SELECT customer_id,
@@ -60,8 +44,6 @@ FROM customer
 WHERE discount_applied = 'Yes'
 AND purchase_amount >
       (SELECT AVG(purchase_amount) FROM customer);
-
------------------------------------------------------------------------------------------------------------------------
 
 -- q3. which are the top 5 products with the highest average review rating?
 select item_purchased, avg(review_rating) 
@@ -86,16 +68,12 @@ FROM customer
 GROUP BY subscription_status
 ORDER BY total_revenue desc, avg_spend DESC;
 
---Subscribers and non-subscribers show nearly identical average spend (~$59.5 vs ~$59.8), 
---suggesting subscription status does not significantly influence purchase behavior.
------------------------------------------------------------------------------------------------------------------------
 -- q6. which 5 products have the highest percentage of purchases with discounts applied?
 select item_purchased,
 round(avg(case when discount_applied='Yes' then 1 else 0 end)*100,2) as discount_rate
 from customer
 group by item_purchased
 order by discount_rate desc limit 5;
-----------------------------------------------------------------------------------------------------------------------
 
 -- q7. segment customers into new, returning, and loyal based on their total number of previous purchases, 
 --and show the count of each segment.
@@ -113,7 +91,7 @@ case
 select customer_segment, count(*) as "Number of Customers"
 from customer_type
 group by customer_segment
------------------------------------------------------------------------------------------------------------------------
+
 -- q8. what are the top 3 most purchased products within each category?
 with item_counts as(
   select category, 
@@ -126,14 +104,14 @@ group by category, item_purchased
 select item_rank, category, item_purchased, total_orders
 from item_counts
 where item_rank <=3
-----------------------------------------------------------------------------------------------------------------------
+
 -- q9. Are customers who are repeat buyers(more than 5 previous purchases)also likely to subscribe?
 select subscription_status,
 count(customer_id) as repeat_buyers
 from customer
 where previous_purchases>5
 group by subscription_status
-----------------------------------------------------------------------------------------------------------------------
+
 -- q10. what is the revenue contribution of each age group?
 
 select age_group, sum(purchase_amount) as total_revenue
